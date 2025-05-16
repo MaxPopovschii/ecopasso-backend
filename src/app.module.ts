@@ -11,9 +11,9 @@ import { FootprintModule } from './footprint/footprint.module';
       type: 'mysql',
       host: process.env.DB_HOST ?? 'localhost',
       port: 3306,
-      username: process.env.DB_USER ?? 'root',
-      password: process.env.DB_PASS ?? '',
-      database: process.env.DB_NAME ?? 'ecopasso',
+      username: process.env.DB_USER ?? 'max',
+      password: process.env.DB_PASS ?? 'Dom200598!',
+      database: process.env.DB_NAME ?? 'ecofootrpint',
       autoLoadEntities: true,
       synchronize: true, // disabilita in produzione!
     }),

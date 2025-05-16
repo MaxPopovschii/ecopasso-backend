@@ -1,18 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FootprintResponseDto {
-  @ApiProperty({ description: 'User ID' })
-  userId: number;
+  @ApiProperty({ description: 'User email' })
+  email: string;
 
   @ApiProperty({ description: 'Total carbon footprint in kg CO2' })
   totalFootprint: number;
 
   @ApiProperty({ description: 'Breakdown by category' })
   breakdown: {
-    transport: number;
+    food: number;
     energy: number;
     waste: number;
-    food: number;
+    transport: number;
   };
 
   @ApiProperty({ description: 'Calculation timestamp' })

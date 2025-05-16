@@ -2,7 +2,6 @@ import {
   Controller, 
   Get, 
   Param, 
-  ParseIntPipe,
   HttpStatus,
   NotFoundException
 } from '@nestjs/common';
@@ -15,9 +14,9 @@ import { FootprintResponseDto } from './dto/footprint-response.dto'
 export class FootprintController {
   constructor(private readonly footprintService: FootprintService) {}
 
-  @Get(':userId')
+  @Get(':email')
   @ApiOperation({ summary: 'Calculate user carbon footprint' })
-  @ApiParam({ name: 'userId', type: Number, description: 'User ID' })
+  @ApiParam({ name: 'email', type: String, description: 'User email' })
   @ApiResponse({ 
     status: HttpStatus.OK, 
     description: 'Returns user carbon footprint',
@@ -28,19 +27,14 @@ export class FootprintController {
     description: 'User not found' 
   })
   async getUserFootprint(
-    @Param('userId', ParseIntPipe) userId: number
+    @Param('email') email: string
   ): Promise<FootprintResponseDto> {
-    const footprint = await this.footprintService.calculateFootprint(userId);
+    const footprint = await this.footprintService.calculateFootprint(email);
     
     if (!footprint) {
-      throw new NotFoundException(`Footprint for user ${userId} not found`);
+      throw new NotFoundException(`Footprint for user ${email} not found`);
     }
     
-    return {
-      userId,
-      totalFootprint: footprint.co2,
-      breakdown: (footprint as any).breakdown ?? {},
-      calculatedAt: (footprint as any).calculatedAt ?? new Date(),
-    };
+    return footprint;
   }
 }
