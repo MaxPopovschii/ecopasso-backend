@@ -11,7 +11,7 @@ import { AuthController } from './auth.controller';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'changeme',
+      secret: process.env.JWT_SECRET ?? 'changeme',
       signOptions: { expiresIn: '7d' },
     }),
   ],
