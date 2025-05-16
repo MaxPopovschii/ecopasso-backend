@@ -17,7 +17,6 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('users')
-@UseGuards()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
