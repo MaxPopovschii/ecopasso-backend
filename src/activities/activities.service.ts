@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Activity } from './entities/activity.entity';
+import { CreateActivityDto } from './dto/create-activity.dto';
+import { UpdateActivityDto } from './dto/update-activity.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -12,7 +14,7 @@ export class ActivitiesService {
 
   async findAll(page: number = 1, limit: number = 10): Promise<{activities: Activity[], total: number}> {
     const [activities, total] = await this.activitiesRepository.findAndCount({
-      relations: ['user'],
+      relations: ['user', 'activityType'],
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' }
@@ -24,7 +26,7 @@ export class ActivitiesService {
   async findOne(id: number): Promise<Activity> {
     const activity = await this.activitiesRepository.findOne({ 
       where: { id }, 
-      relations: ['user'] 
+      relations: ['user', 'activityType'] 
     });
     
     if (!activity) {
@@ -33,19 +35,28 @@ export class ActivitiesService {
     return activity;
   }
 
-  async create(activity: Partial<Activity>): Promise<Activity> {
-    if (!activity.userId) {
-      throw new BadRequestException('User ID is required');
+  async create(createActivityDto: CreateActivityDto): Promise<Activity> {
+    if (!createActivityDto.userEmail) {
+      throw new BadRequestException('User email is required');
     }
 
-    const newActivity = this.activitiesRepository.create(activity);
-    return this.activitiesRepository.save(newActivity);
+    if (!createActivityDto.activityTypeId) {
+      throw new BadRequestException('Activity type is required');
+    }
+
+    const activity = this.activitiesRepository.create({
+      userEmail: createActivityDto.userEmail,
+      activityTypeId: createActivityDto.activityTypeId,
+      note: createActivityDto.note
+    });
+
+    return this.activitiesRepository.save(activity);
   }
 
-  async update(id: number, updateData: Partial<Activity>): Promise<Activity> {
+  async update(id: number, updateActivityDto: UpdateActivityDto): Promise<Activity> {
     const activity = await this.findOne(id);
     
-    Object.assign(activity, updateData);
+    Object.assign(activity, updateActivityDto);
     return this.activitiesRepository.save(activity);
   }
 
@@ -54,19 +65,24 @@ export class ActivitiesService {
     await this.activitiesRepository.remove(activity);
   }
 
-  async findByUser(userId: number): Promise<Activity[]> {
+  async findByUser(email: string): Promise<Activity[]> {
     return this.activitiesRepository.find({
-      where: { userId },
-      relations: ['user'],
+      where: { userEmail: email },
+      relations: ['user', 'activityType'],
       order: { createdAt: 'DESC' }
     });
+  }
+
+  async findByCategory(categoryId: number): Promise<Activity[]> {
+    // Replace 'activityTypeId' with the correct property name if needed
+    return await this.activitiesRepository.find({ where: { activityTypeId: categoryId } });
   }
 
   async getTotalActivityStats(): Promise<{ totalActivities: number, totalUsers: number }> {
     const totalActivities = await this.activitiesRepository.count();
     const totalUsers = await this.activitiesRepository
       .createQueryBuilder('activity')
-      .select('COUNT(DISTINCT activity.userId)', 'count')
+      .select('COUNT(DISTINCT activity.userEmail)', 'count')
       .getRawOne();
 
     return {

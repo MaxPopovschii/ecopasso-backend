@@ -1,22 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateActivityDto {
   @ApiProperty()
-  @IsNumber()
-  userId: number;
+  @IsString()
+  @IsNotEmpty()
+  userEmail: string;
 
   @ApiProperty()
-  @IsString()
-  type: string;
+  @IsNumber()
+  @IsNotEmpty()
+  activityTypeId: number;
 
   @ApiProperty({ required: false })
-  @IsOptional()
   @IsString()
-  description?: string;
-
-  @ApiProperty({ required: false })
   @IsOptional()
-  @IsDate()
-  completedAt?: Date;
+  note?: string;
 }

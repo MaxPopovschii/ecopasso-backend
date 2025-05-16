@@ -71,11 +71,18 @@ export class ActivitiesController {
     await this.activitiesService.remove(id);
   }
 
-  @Get('user/:userId')
-  @ApiOperation({ summary: 'Get activities by user ID' })
+  @Get('user/:email')
+  @ApiOperation({ summary: 'Get activities by user email' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns user activities' })
-  async findByUser(@Param('userId', ParseIntPipe) userId: number) {
-    return this.activitiesService.findByUser(userId);
+  async findByUser(@Param('email') email: string) {
+    return this.activitiesService.findByUser(email);
+  }
+
+  @Get('category/:categoryId')
+  @ApiOperation({ summary: 'Get activities by category' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Returns activities by category' })
+  async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
+    return this.activitiesService.findByCategory(categoryId);
   }
 
   @Get('stats/total')

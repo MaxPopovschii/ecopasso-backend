@@ -14,7 +14,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -42,7 +42,6 @@ export class AuthController {
     return {
       access_token: loginResult.access_token,
       user: {
-        id: user.id,
         email: user.email,
         name: user.name,
       },

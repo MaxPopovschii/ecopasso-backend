@@ -7,9 +7,7 @@ import {
   Param, 
   Delete, 
   HttpStatus,
-  HttpCode,
-  ParseIntPipe,
-  Query
+  HttpCode
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -32,19 +30,11 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+  async findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'User found' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
-  async findById(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findById(id);
-  }
-
-  @Get('email/:email')
+  @Get(':email')
   @ApiOperation({ summary: 'Get user by email' })
   @ApiResponse({ status: HttpStatus.OK, description: 'User found' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
@@ -52,23 +42,23 @@ export class UsersController {
     return this.usersService.findByEmail(email);
   }
 
-  @Patch(':id')
+  @Patch(':email')
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: HttpStatus.OK, description: 'User updated successfully' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('email') email: string,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(email, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete(':email')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'User deleted successfully' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    await this.usersService.delete(id);
+  async delete(@Param('email') email: string) {
+    await this.usersService.delete(email);
   }
 }

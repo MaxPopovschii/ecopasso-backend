@@ -1,12 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Activity } from '../../activities/entities/activity.entity';
 
-@Entity()
+@Entity('utenti')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ unique: true })
+  @PrimaryColumn()
   email: string;
 
   @Column()
@@ -17,6 +14,12 @@ export class User {
 
   @Column()
   password: string;
+
+  @CreateDateColumn({ name: 'registration_date' })
+  registrationDate: Date;
+
+  @Column({ name: 'last_access', nullable: true })
+  lastAccess: Date;
 
   @OneToMany(() => Activity, (activity) => activity.user)
   activities: Activity[];

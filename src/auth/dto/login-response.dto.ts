@@ -6,7 +6,6 @@ export class LoginResponseDto {
 
   @ApiProperty()
   user: {
-    id: number;
     email: string;
     name: string;
   };

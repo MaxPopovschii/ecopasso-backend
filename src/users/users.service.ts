@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -16,33 +17,28 @@ export class UsersService {
     return user ?? undefined;
   }
 
-  async findById(id: number): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-    return user;
-  }
-
-  async create(user: Partial<User>): Promise<User> {
-    // Check if user already exists
-    if (!user.email) {
-      throw new ConflictException('Email must be provided');
-    }
-    const existingUser = await this.findByEmail(user.email);
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const existingUser = await this.findByEmail(createUserDto.email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    if (user.password) {
-      user.password = await bcrypt.hash(user.password, 10);
-    }
-    const newUser = this.usersRepository.create(user);
-    return this.usersRepository.save(newUser);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+      registrationDate: new Date(),
+    });
+
+    return this.usersRepository.save(user);
   }
 
-  async update(id: number, updateData: Partial<User>): Promise<User> {
-    const user = await this.findById(id);
+  async update(email: string, updateData: Partial<User>): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
 
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
@@ -52,8 +48,31 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async delete(id: number): Promise<void> {
-    const user = await this.findById(id);
+  async updateLastAccess(email: string): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    user.lastAccess = new Date();
+    return this.usersRepository.save(user);
+  }
+
+  async updatePassword(email: string, newPassword: string): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    return this.usersRepository.save(user);
+  }
+
+  async delete(email: string): Promise<void> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
     await this.usersRepository.remove(user);
   }
 

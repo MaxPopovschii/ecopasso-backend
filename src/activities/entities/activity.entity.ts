@@ -4,47 +4,33 @@ import {
   Column, 
   ManyToOne, 
   CreateDateColumn,
-  UpdateDateColumn,
   JoinColumn
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { ActivityType } from './activity-type.entity';
 
-@Entity('activities')
+@Entity('attivita')
 export class Activity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_attivita' })
   id: number;
 
-  @Column()
-  name: string;
+  @Column({ name: 'email_utente' })
+  userEmail: string;
+
+  @Column({ name: 'id_tipo_attivita' })
+  activityTypeId: number;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  note: string;
 
-  @Column()
-  userId: number;
-
-  @ManyToOne(() => User, (user) => user.activities, {
-    onDelete: 'CASCADE'
-  })
-  @JoinColumn({ name: 'userId' })
-  user: User;
-
-  @Column({
-    type: 'enum',
-    enum: ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
-    default: 'PENDING'
-  })
-  status: string;
-
-  @Column('int', { default: 0 })
-  ecoPoints: number;
-
-  @Column({ type: 'timestamp', nullable: true })
-  completedAt: Date;
-
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'data_inserimento' })
   createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @ManyToOne(() => User, (user) => user.activities)
+  @JoinColumn({ name: 'email_utente' })
+  user: User;
+
+  @ManyToOne(() => ActivityType)
+  @JoinColumn({ name: 'id_tipo_attivita' })
+  activityType: ActivityType;
 }
