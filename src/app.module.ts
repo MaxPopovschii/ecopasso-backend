@@ -1,15 +1,34 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
 import { ActivitiesModule } from './activities/activities.module';
-import { FootprintModule } from './footprint/footprint.module';
-import { Activity } from './activities/entities/activity.entity';
 import { ActivityType } from './activities/entities/activity-type.entity';
+import { Activity } from './activities/entities/activity.entity';
+import { AuthModule } from './auth/auth.module';
+import { FootprintModule } from './footprint/footprint.module';
 import { User } from './users/entities/user.entity';
+import { UsersModule } from './users/users.module';
+import { EmailModule } from './email/email.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com', // oppure smtp.mailtrap.io
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'giocrew09@gmail.com',
+          pass: 'pvidmrvypekeiayu', // Gmail richiede app password
+        },
+        tls: {
+      rejectUnauthorized: false,  // <-- Questa riga permette di bypassare l'errore SSL
+    },
+      },
+      defaults: {
+        from: '"EcoPasso" <giocrew09@gmail.com>',
+      },
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       driver: require('mysql2'),
@@ -20,12 +39,13 @@ import { User } from './users/entities/user.entity';
       database: process.env.DB_NAME ?? 'ecofootprint',
       entities: [Activity, ActivityType, User], // Add both entities here
       autoLoadEntities: true,
-      synchronize: true, // disabilita in produzione!
+      synchronize: false, // disabilita in produzione!
     }),
     AuthModule,
     UsersModule,
     ActivitiesModule,
     FootprintModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

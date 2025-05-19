@@ -1,20 +1,21 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Patch, 
-  Param, 
-  Delete, 
-  HttpStatus,
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
   UseGuards
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -41,7 +42,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user by email' })
   @ApiResponse({ status: HttpStatus.OK, description: 'User found' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
-  async findByEmail(@Param('email') email: string) {
+  async findByEmail(@Query('email') email: string) {
     return this.usersService.findByEmail(email);
   }
 

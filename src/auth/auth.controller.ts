@@ -1,43 +1,52 @@
-import { 
-  Controller, 
-  Post, 
-  Body, 
-  HttpCode, 
-  HttpStatus, 
-  UnauthorizedException 
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { EmailService } from '../email/email.service';
+import { UsersService } from '../users/users.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly emailService: EmailService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
+  @ApiResponse({
+    status: HttpStatus.OK,
     description: 'Login successful',
-    type: LoginResponseDto 
+    type: LoginResponseDto,
   })
-  @ApiResponse({ 
-    status: HttpStatus.UNAUTHORIZED, 
-    description: 'Invalid credentials' 
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid credentials',
   })
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     const user = await this.authService.validateUser(
-      loginDto.email, 
-      loginDto.password
+      loginDto.email,
+      loginDto.password,
     );
-    
+
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    
+
     const loginResult = await this.authService.login(user);
     return {
       access_token: loginResult.access_token,
@@ -47,4 +56,32 @@ export class AuthController {
       },
     };
   }
+
+
+@Post('verify-otp')
+@HttpCode(HttpStatus.OK)
+async verifyOtp(@Body() body: { email: string; otp: string }) {
+  const { email, otp } = body;
+  const isValid = this.emailService.verifyOtp(email, otp);
+  if (!isValid) {
+    throw new BadRequestException('Invalid or expired OTP');
+  }
+  return { message: 'OTP verified successfully' };
 }
+
+@Post('register')
+@HttpCode(HttpStatus.CREATED)
+async register(@Body() createUserDto: CreateUserDto) {
+  try {
+    const user = await this.usersService.create(createUserDto);
+    return { message: 'User registered successfully', user };
+  } catch (err) {
+    if (err instanceof ConflictException) {
+      throw err;
+    }
+    throw new BadRequestException('Registration failed');
+  }
+}
+
+}
+
