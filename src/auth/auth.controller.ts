@@ -60,6 +60,15 @@ export class AuthController {
 
 @Post('verify-otp')
 @HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'Verify OTP' })
+@ApiResponse({
+  status: HttpStatus.OK,
+  description: 'OTP verified successfully',
+})
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: 'Invalid or expired OTP',
+})
 async verifyOtp(@Body() body: { email: string; otp: string }) {
   const { email, otp } = body;
   const isValid = this.emailService.verifyOtp(email, otp);
@@ -71,6 +80,15 @@ async verifyOtp(@Body() body: { email: string; otp: string }) {
 
 @Post('register')
 @HttpCode(HttpStatus.CREATED)
+@ApiOperation({ summary: 'User registration' })
+@ApiResponse({
+  status: HttpStatus.CREATED,
+  description: 'User registered successfully',
+})
+@ApiResponse({
+  status: HttpStatus.BAD_REQUEST,
+  description: 'Registration failed',
+})
 async register(@Body() createUserDto: CreateUserDto) {
   try {
     const user = await this.usersService.create(createUserDto);

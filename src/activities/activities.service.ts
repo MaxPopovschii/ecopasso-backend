@@ -74,7 +74,6 @@ export class ActivitiesService {
   }
 
   async findByCategory(categoryId: number): Promise<Activity[]> {
-    // Replace 'activityTypeId' with the correct property name if needed
     return await this.activitiesRepository.find({ where: { activityTypeId: categoryId } });
   }
 

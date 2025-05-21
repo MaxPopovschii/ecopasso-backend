@@ -4,7 +4,7 @@ import { EmailController } from './email.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
-  imports: [MailerModule],  // <- qui
+  imports: [MailerModule],  
   controllers: [EmailController],
   providers: [EmailService],
   exports: [EmailService],

@@ -14,19 +14,19 @@ import { MailerModule } from '@nestjs-modules/mailer';
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com', // oppure smtp.mailtrap.io
+        host: 'smtp.gmail.com', 
         port: 587,
         secure: false,
         auth: {
           user: 'giocrew09@gmail.com',
-          pass: 'pvidmrvypekeiayu', // Gmail richiede app password
+          pass: 'pvidmrvypekeiayu', 
         },
         tls: {
-      rejectUnauthorized: false,  // <-- Questa riga permette di bypassare l'errore SSL
+      rejectUnauthorized: false,  
     },
       },
       defaults: {
-        from: '"EcoPasso" <giocrew09@gmail.com>',
+        from: '"EcoPasso" <no-reply@ecopasso.com>',
       },
     }),
     TypeOrmModule.forRoot({
@@ -37,9 +37,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
       username: process.env.DB_USER ?? 'root',
       password: process.env.DB_PASS ?? 'Dom200598!',
       database: process.env.DB_NAME ?? 'ecofootprint',
-      entities: [Activity, ActivityType, User], // Add both entities here
+      entities: [Activity, ActivityType, User], 
       autoLoadEntities: true,
-      synchronize: false, // disabilita in produzione!
+      synchronize: false, 
     }),
     AuthModule,
     UsersModule,
