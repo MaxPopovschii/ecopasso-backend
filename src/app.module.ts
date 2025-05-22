@@ -10,6 +10,9 @@ import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailNotificatorModule } from './email-notificator/email-notificator.module';
+import { BadgesModule } from './badges/badges.module';
+import { GoalsModule } from './goals/goals.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -23,8 +26,8 @@ import { EmailNotificatorModule } from './email-notificator/email-notificator.mo
           pass: 'pvidmrvypekeiayu', 
         },
         tls: {
-      rejectUnauthorized: false,  
-    },
+          rejectUnauthorized: false,  
+        },
       },
       defaults: {
         from: '"EcoPasso" <no-reply@ecopasso.com>',
@@ -48,6 +51,9 @@ import { EmailNotificatorModule } from './email-notificator/email-notificator.mo
     FootprintModule,
     EmailModule,
     EmailNotificatorModule,
+    BadgesModule,
+    GoalsModule,
+    LeaderboardModule,
   ],
 })
 export class AppModule {}
