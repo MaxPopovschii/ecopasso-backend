@@ -4,26 +4,6 @@ import { FootprintResponseDto } from './dto/footprint-response.dto';
 
 @Injectable()
 export class FootprintService {
-  private readonly emissionFactors = {
-    food: {
-      vegetariano: 3.8,
-      locale: 1.5,
-      riutilizzo: 0.5
-    },
-    energy: {
-      energia: 0.5,
-      acqua: 0.2
-    },
-    waste: {
-      riciclo: 0.1
-    },
-    transport: {
-      bicicletta: 0,
-      mezzi_pubblici: 0.08,
-      auto_elettrica: 0.05
-    }
-  };
-
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   async calculateFootprint(email: string): Promise<FootprintResponseDto> {
@@ -32,8 +12,7 @@ export class FootprintService {
     if (!activities.length) {
       throw new NotFoundException(`No activities found for user ${email}`);
     }
-
-    // Breakdown con chiavi inglesi
+    
     const breakdown = {
       food: 0,
       energy: 0,
@@ -42,22 +21,18 @@ export class FootprintService {
     };
 
     for (const activity of activities) {
-      let category: string = activity.activityType.categoria; // 'alimentazione', 'casa', 'trasporti'
-      const nome = activity.activityType.nome;
-      // Se non hai quantity, usa sempre 1
-      const quantity = (activity as any).quantity ?? 1;
-
-      // Mappa le categorie italiane a quelle inglesi
-      if (category === 'alimentazione') category = 'food';
-      else if (category === 'casa' && nome === 'riciclo') category = 'waste';
-      else if (category === 'casa') category = 'energy';
-      else if (category === 'trasporti') category = 'transport';
+      const category = this.mapCategory(
+        activity.activityType.category?.name,
+        activity.activityType.name
+      );
+      const emissionFactor = Number(activity.activityType.emission_factor);
+      const quantity = this.extractQuantity(activity);
 
       if (
-        this.emissionFactors[category] &&
-        this.emissionFactors[category][nome] !== undefined
+        breakdown[category] !== undefined &&
+        !isNaN(emissionFactor)
       ) {
-        breakdown[category] += this.emissionFactors[category][nome] * quantity;
+        breakdown[category] += emissionFactor * quantity;
       }
     }
 
@@ -69,5 +44,26 @@ export class FootprintService {
       breakdown,
       calculatedAt: new Date()
     };
+  }
+
+  private mapCategory(category: string, nome: string): string {
+    if (category === 'alimentazione') return 'food';
+    if (category === 'casa' && (nome === 'riciclo' || nome === 'Riciclo')) return 'waste';
+    if (category === 'casa') return 'energy';
+    if (category === 'trasporti') return 'transport';
+    return category;
+  }
+
+  private extractQuantity(activity: any): number {
+    let quantity = 1;
+    const possibleFields = ['consumption', 'quantity', 'distance_km', 'quantity_kg'];
+    for (const field of possibleFields) {
+      const found = activity.data?.find(d => d.field_name === field);
+      if (found) {
+        quantity = Number(found.field_value) || 1;
+        break;
+      }
+    }
+    return quantity;
   }
 }

@@ -3,34 +3,33 @@ import {
   PrimaryGeneratedColumn, 
   Column, 
   ManyToOne, 
-  CreateDateColumn,
-  JoinColumn
+  OneToMany, 
+  JoinColumn, 
+  CreateDateColumn 
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { ActivityType } from './activity-type.entity';
+import { ActivityData } from './activity-data.entity';
 
-@Entity('attivita')
+@Entity('activities')
 export class Activity {
-  @PrimaryGeneratedColumn({ name: 'id_attivita' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'email_utente' })
-  userEmail: string;
-
-  @Column({ name: 'id_tipo_attivita' })
-  activityTypeId: number;
-
-  @Column({ type: 'text', nullable: true })
-  note: string;
-
-  @CreateDateColumn({ name: 'data_inserimento' })
-  createdAt: Date;
-
   @ManyToOne(() => User, (user) => user.activities)
-  @JoinColumn({ name: 'email_utente' })
+  @JoinColumn({ name: 'user_email' })
   user: User;
 
-  @ManyToOne(() => ActivityType)
-  @JoinColumn({ name: 'id_tipo_attivita' })
+  @ManyToOne(() => ActivityType, (type) => type.activities)
+  @JoinColumn({ name: 'activity_type_id' })
   activityType: ActivityType;
+
+  @CreateDateColumn({ name: 'date' })
+  date: Date;
+
+  @Column({ nullable: true })
+  note: string;
+
+  @OneToMany(() => ActivityData, (data) => data.activity, { cascade: true })
+  data: ActivityData[];
 }

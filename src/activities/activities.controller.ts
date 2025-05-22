@@ -5,15 +5,13 @@ import {
   Body, 
   Param, 
   Delete, 
-  Query, 
   ParseIntPipe,
   HttpStatus,
   HttpCode,
   Put
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ActivitiesService } from './activities.service';
-import { Activity } from './entities/activity.entity';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 
@@ -23,15 +21,10 @@ export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all activities with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Returns paginated activities' })
-  async findAll(
-    @Query('page', new ParseIntPipe({ optional: true })) page = 1,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10
-  ) {
-    return this.activitiesService.findAll(page, limit);
+  @ApiOperation({ summary: 'Get all activities' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Returns all activities' })
+  async findAll() {
+    return this.activitiesService.findAll();
   }
 
   @Get(':id')

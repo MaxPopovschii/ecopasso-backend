@@ -1,31 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { ActivityCategory } from './activity-category.entity';
 import { Activity } from './activity.entity';
 
-export enum ActivityCategory {
-  ALIMENTAZIONE = 'alimentazione',
-  CASA = 'casa',
-  TRASPORTI = 'trasporti'
-}
-
-@Entity('tipi_attivita')
+@Entity('activity_types')
 export class ActivityType {
-  @PrimaryGeneratedColumn({ name: 'id_tipo_attivita' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  nome: string;
-
-  @Column({ type: 'enum', enum: ActivityCategory })
-  categoria: ActivityCategory;
-
-  @Column({ name: 'unita_misura' })
-  unitaMisura: string;
-
-  @Column({ name: 'fattore_conversione', type: 'decimal', precision: 10, scale: 2 })
-  fattoreConversione: number;
+  @ManyToOne(() => ActivityCategory, (category) => category.types)
+  @JoinColumn({ name: 'category_id' })
+  category: ActivityCategory;
 
   @Column()
-  punti: number;
+  name: string;
+
+  @Column({ nullable: true })
+  unit: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 4, nullable: true })
+  emission_factor: number;
 
   @OneToMany(() => Activity, (activity) => activity.activityType)
   activities: Activity[];

@@ -1,5 +1,18 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional, ValidateNested, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+class ActivityDataDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  field_name: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  field_value: string;
+}
 
 export class CreateActivityDto {
   @ApiProperty()
@@ -16,4 +29,11 @@ export class CreateActivityDto {
   @IsString()
   @IsOptional()
   note?: string;
+
+  @ApiProperty({ type: [ActivityDataDto], required: false })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ActivityDataDto)
+  @IsOptional()
+  data?: ActivityDataDto[];
 }

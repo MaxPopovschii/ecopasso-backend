@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { Activity } from '../../activities/entities/activity.entity';
 
 @Entity('utenti')
