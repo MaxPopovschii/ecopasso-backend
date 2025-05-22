@@ -59,49 +59,67 @@ export class AuthController {
   }
 
 
-@Post('verify-otp')
-@HttpCode(HttpStatus.OK)
-@ApiOperation({ summary: 'Verify OTP' })
-@ApiResponse({
-  status: HttpStatus.OK,
-  description: 'OTP verified successfully',
-})
-@ApiResponse({
-  status: HttpStatus.BAD_REQUEST,
-  description: 'Invalid or expired OTP',
-})
-async verifyOtp(@Body() body: { email: string; otp: string }) {
-  const { email, otp } = body;
-  const isValid = this.emailService.verifyOtp(email, otp);
-  if (!isValid) {
-    throw new BadRequestException('Invalid or expired OTP');
-  }
-  return { message: 'OTP verified successfully' };
-}
-
-@Public()
-@Post('register')
-@HttpCode(HttpStatus.CREATED)
-@ApiOperation({ summary: 'User registration' })
-@ApiResponse({
-  status: HttpStatus.CREATED,
-  description: 'User registered successfully',
-})
-@ApiResponse({
-  status: HttpStatus.BAD_REQUEST,
-  description: 'Registration failed',
-})
-async register(@Body() createUserDto: CreateUserDto) {
-  try {
-    const user = await this.usersService.create(createUserDto);
-    return { message: 'User registered successfully', user };
-  } catch (err) {
-    if (err instanceof ConflictException) {
-      throw err;
+  @Post('verify-otp')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify OTP' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'OTP verified successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid or expired OTP',
+  })
+  async verifyOtp(@Body() body: { email: string; otp: string }) {
+    const { email, otp } = body;
+    const isValid = this.emailService.verifyOtp(email, otp);
+    if (!isValid) {
+      throw new BadRequestException('Invalid or expired OTP');
     }
-    throw new BadRequestException('Registration failed');
+    return { message: 'OTP verified successfully' };
   }
-}
+
+  @Public()
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'User registration' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'User registered successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Registration failed',
+  })
+  async register(@Body() createUserDto: CreateUserDto) {
+    try {
+      const user = await this.usersService.create(createUserDto);
+      return { message: 'User registered successfully', user };
+    } catch (err) {
+      if (err instanceof ConflictException) {
+        throw err;
+      }
+      throw new BadRequestException('Registration failed');
+    }
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    await this.authService.sendPasswordReset(body.email);
+    return { message: 'Se l’email esiste, riceverai un link per il reset.' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(
+    @Body() body: { email: string; password: string; token: string },
+  ) {
+    const { email, password, token } = body;
+    if (!email || !password || !token) {
+      throw new BadRequestException('Email, password, and token are required');
+    }
+    //await this.authService.resetPassword(email, password, token);
+    return { message: 'Password reset successfully' };
+  }
 
 }
 

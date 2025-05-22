@@ -13,9 +13,18 @@ import { EmailNotificatorModule } from './email-notificator/email-notificator.mo
 import { BadgesModule } from './badges/badges.module';
 import { GoalsModule } from './goals/goals.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 100,
+        }
+      ]
+    }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com', 
