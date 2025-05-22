@@ -15,6 +15,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { Public } from './public.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -24,7 +25,7 @@ export class AuthController {
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
   ) {}
-
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
@@ -78,6 +79,7 @@ async verifyOtp(@Body() body: { email: string; otp: string }) {
   return { message: 'OTP verified successfully' };
 }
 
+@Public()
 @Post('register')
 @HttpCode(HttpStatus.CREATED)
 @ApiOperation({ summary: 'User registration' })
