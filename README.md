@@ -1,7 +1,7 @@
 # 🌱 EcoPasso Backend
 
 > **Il backend NestJS per calcolare e tracciare la tua impronta ecologica.**  
-> _Un progetto "stupido" ma green di Maxim Popovschii._
+> _Un progetto "stupido" ma green di Maxim Popovschii e Giovanni Traini._
 
 ---
 
