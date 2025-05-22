@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class EmailService {
   constructor(private readonly mailer: MailerService) {}
-  private otps: Map<string, { code: string; expiresAt: Date }> = new Map();
+  private readonly otps: Map<string, { code: string; expiresAt: Date }> = new Map();
 
   generateOtp(email: string): string {
     const code = Math.floor(100000 + Math.random() * 900000).toString();

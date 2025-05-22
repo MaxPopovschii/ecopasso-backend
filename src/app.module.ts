@@ -9,6 +9,7 @@ import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailNotificatorModule } from './email-notificator/email-notificator.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     ActivitiesModule,
     FootprintModule,
     EmailModule,
+    EmailNotificatorModule,
   ],
 })
 export class AppModule {}
