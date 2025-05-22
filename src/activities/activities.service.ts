@@ -60,11 +60,8 @@ export class ActivitiesService {
       activity.note = updateActivityDto.note;
     }
 
-    // Aggiorna i dati specifici se forniti
     if (updateActivityDto.data) {
-      // Rimuovi i vecchi dati
       await this.activityDataRepository.delete({ activity: { id } });
-      // Aggiungi i nuovi dati
       activity.data = updateActivityDto.data.map(d => this.activityDataRepository.create(d));
     }
 

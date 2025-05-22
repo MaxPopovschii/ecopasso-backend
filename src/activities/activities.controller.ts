@@ -20,21 +20,6 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all activities' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Returns all activities' })
-  async findAll() {
-    return this.activitiesService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get activity by ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Activity found' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Activity not found' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.activitiesService.findOne(id);
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create new activity' })
