@@ -1,11 +1,13 @@
 import { Controller, Post, Query, InternalServerErrorException, HttpCode, HttpStatus } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('email')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
+  @Public()
   @Post('/send-otp')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Send OTP' })

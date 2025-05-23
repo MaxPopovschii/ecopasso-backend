@@ -1,20 +1,19 @@
 import {
-  Controller,
-  Post,
+  BadRequestException,
   Body,
+  ConflictException,
+  Controller,
   HttpCode,
   HttpStatus,
+  Post,
   UnauthorizedException,
-  BadRequestException,
-  ConflictException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { EmailService } from '../email/email.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
-import { EmailService } from '../email/email.service';
-import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { Public } from './public.decorator';
 
 @ApiTags('Authentication')
@@ -32,13 +31,12 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Login successful',
-    type: LoginResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
-  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+  async login(@Body() loginDto: LoginDto): Promise<String> {
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
@@ -49,16 +47,11 @@ export class AuthController {
     }
 
     const loginResult = await this.authService.login(user);
-    return {
-      access_token: loginResult.access_token,
-      user: {
-        email: user.email,
-        name: user.name,
-      },
-    };
+    await this.usersService.updateLastAccess(loginDto.email);
+    return loginResult.access_token;
   }
 
-
+  @Public()
   @Post('verify-otp')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify OTP' })
@@ -93,7 +86,12 @@ export class AuthController {
   })
   async register(@Body() createUserDto: CreateUserDto) {
     try {
-      const user = await this.usersService.create(createUserDto);
+      const user = await this.usersService.create({
+        name: createUserDto.name,
+        surname: createUserDto.surname,
+        email: createUserDto.email,
+        password: createUserDto.password
+      });
       return { message: 'User registered successfully', user };
     } catch (err) {
       if (err instanceof ConflictException) {

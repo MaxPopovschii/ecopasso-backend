@@ -8,9 +8,10 @@ import {
   Param,
   Patch,
   Post,
-  Query,
+  Query
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/public.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -20,6 +21,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create new user' })
@@ -28,7 +30,7 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   async findAll() {
@@ -40,7 +42,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK, description: 'User found' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   async findByEmail(@Query('email') email: string) {
-    return this.usersService.findByEmail(email);
+    return this.usersService.findByEmail(email.trim().toLowerCase());
   }
 
   @Patch(':email')

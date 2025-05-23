@@ -1,9 +1,9 @@
-import { Entity, Column, OneToMany, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Activity } from '../../activities/entities/activity.entity';
 
-@Entity('utenti')
+@Entity('users')
 export class User {
-  @PrimaryColumn()
+  @PrimaryColumn({unique : true})
   email: string;
 
   @Column()
@@ -15,7 +15,7 @@ export class User {
   @Column()
   password: string;
 
-  @CreateDateColumn({ name: 'registration_date' })
+  @CreateDateColumn({ name: 'created_at' })
   registrationDate: Date;
 
   @Column({ name: 'last_access', nullable: true })

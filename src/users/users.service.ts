@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,9 +12,11 @@ export class UsersService {
     private readonly usersRepository: Repository<User>
   ) {}
 
-  async findByEmail(email: string): Promise<User | undefined> {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    return user ?? undefined;
+ async findByEmail(email: string) {
+    return await this.usersRepository
+      .createQueryBuilder()
+      .where('email = :email', {email})
+      .getOne();
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
