@@ -38,12 +38,9 @@ export class UsersController {
   }
 
   @Get(':email')
-  @ApiOperation({ summary: 'Get user by email' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'User found' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
-  async findByEmail(@Query('email') email: string) {
+    async findByEmail(@Param('email') email: string) {
     return this.usersService.findByEmail(email.trim().toLowerCase());
-  }
+}
 
   @Patch(':email')
   @ApiOperation({ summary: 'Update user' })

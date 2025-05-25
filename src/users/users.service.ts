@@ -12,12 +12,9 @@ export class UsersService {
     private readonly usersRepository: Repository<User>
   ) {}
 
- async findByEmail(email: string) {
-    return await this.usersRepository
-      .createQueryBuilder()
-      .where('email = :email', {email})
-      .getOne();
-  }
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email } });
+}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.findByEmail(createUserDto.email);
