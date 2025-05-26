@@ -35,7 +35,26 @@ export class EmailService {
         to: email,
         subject: 'Il tuo codice OTP',
         text: `Il tuo codice OTP è: ${code}`,
-        html: `<p>Il tuo codice OTP è: <b>${code}</b></p>`,
+        html: `
+          <div style="font-family: Arial, sans-serif; background: #f6f6f6; padding: 24px;">
+            <div style="max-width: 420px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px;">
+              <h2 style="color: #2e7d32; text-align: center;">Codice OTP EcoPasso</h2>
+              <p style="font-size: 16px; color: #333; text-align: center;">
+                Usa questo codice per completare la tua operazione:
+              </p>
+              <div style="font-size: 32px; color: #388e3c; font-weight: bold; letter-spacing: 4px; text-align: center; margin: 24px 0;">
+                ${code}
+              </div>
+              <p style="font-size: 14px; color: #888; text-align: center;">
+                Il codice scade tra 5 minuti.<br>
+                Se non hai richiesto questo codice, ignora questa email.
+              </p>
+              <p style="font-size: 12px; color: #bbb; text-align: center; margin-top: 32px;">
+                &copy; ${new Date().getFullYear()} EcoPasso
+              </p>
+            </div>
+          </div>
+        `,
       });
       return { success: true };
     } catch (error) {

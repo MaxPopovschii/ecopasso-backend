@@ -45,6 +45,31 @@ export class EmailNotificatorService {
         to: user.email,
         subject: 'EcoPasso: il consiglio green del giorno!',
         text: `${tip}\n\nRicordati di entrare su EcoPasso e inserire le tue attività di oggi!`,
+        html: `
+          <div style="font-family: Arial, sans-serif; background: #f6f6f6; padding: 24px;">
+            <div style="max-width: 480px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px;">
+              <h2 style="color: #2e7d32;">Ciao ${user.name || ''} 👋</h2>
+              <p style="font-size: 18px; color: #333;">
+                <b>Consiglio green del giorno:</b>
+              </p>
+              <blockquote style="font-size: 20px; color: #388e3c; border-left: 4px solid #81c784; margin: 16px 0; padding-left: 16px;">
+                ${tip}
+              </blockquote>
+              <p style="font-size: 16px; color: #333;">
+                Ricordati di entrare su EcoPasso e inserire le tue attività di oggi!
+              </p>
+              <div style="text-align: center; margin-top: 24px;">
+                <a href="https://localhost:3000/login" style="background: #43a047; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-size: 16px;">
+                  Vai a EcoPasso
+                </a>
+              </div>
+              <p style="font-size: 12px; color: #888; margin-top: 32px;">
+                Ricevi questa email perché sei iscritto a EcoPasso.<br>
+                &copy; ${new Date().getFullYear()} EcoPasso
+              </p>
+            </div>
+          </div>
+        `,
       });
       this.logger.log(`Email inviata a ${user.email}`);
     }
