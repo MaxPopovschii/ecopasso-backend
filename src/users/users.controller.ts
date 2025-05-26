@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Query
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
