@@ -36,7 +36,7 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
-  async login(@Body() loginDto: LoginDto): Promise<String> {
+  async login(@Body() loginDto: LoginDto): Promise<string> {
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
@@ -101,12 +101,14 @@ export class AuthController {
     }
   }
 
+  @Public()
   @Post('forgot-password')
   async forgotPassword(@Body() body: { email: string }) {
     await this.authService.sendPasswordReset(body.email);
-    return { message: 'Se l’email esiste, riceverai un link per il reset.' };
+    return { message: 'Tra poco riceverai un link per il reset.' };
   }
 
+  @Public()
   @Post('reset-password')
   async resetPassword(
     @Body() body: { email: string; password: string; token: string },
@@ -115,7 +117,7 @@ export class AuthController {
     if (!email || !password || !token) {
       throw new BadRequestException('Email, password, and token are required');
     }
-    //await this.authService.resetPassword(email, password, token);
+    await this.authService.resetPassword(email, token, password);
     return { message: 'Password reset successfully' };
   }
 
