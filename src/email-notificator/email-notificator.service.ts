@@ -36,7 +36,7 @@ export class EmailNotificatorService {
   ) {}
 
 
-  @Cron(CronExpression.EVERY_DAY_AT_8AM)
+  @Cron(CronExpression.EVERY_DAY_AT_9PM)
   async sendDailyReminders() {
     const users = await this.usersService.findAll();
     for (const user of users) {

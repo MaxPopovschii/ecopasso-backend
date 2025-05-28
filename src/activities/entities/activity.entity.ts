@@ -1,11 +1,11 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  ManyToOne, 
-  OneToMany, 
-  JoinColumn, 
-  CreateDateColumn 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { ActivityType } from './activity-type.entity';
