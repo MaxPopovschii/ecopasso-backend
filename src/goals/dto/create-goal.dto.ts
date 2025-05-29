@@ -26,9 +26,4 @@ export class CreateGoalDto {
   @IsDateString()
   @IsNotEmpty()
   end_date: Date;
-
-  @ApiProperty({ example: 1, description: 'ID del tipo di attività' })
-  @IsNumber()
-  @IsNotEmpty()
-  activityTypeId: number;
 }

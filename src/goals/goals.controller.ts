@@ -14,5 +14,5 @@ export class GoalsController {
   @Post('create')
   async createGoal(@Body() createGoalDto: CreateGoalDto) {
     return this.goalsService.createGoal(createGoalDto);
-  }  
+  }
 }

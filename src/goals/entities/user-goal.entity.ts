@@ -17,10 +17,6 @@ export class UserGoal {
   @JoinColumn({ name: 'user_email' })
   user: User;
 
-  @ManyToOne(() => ActivityType)
-  @JoinColumn({ name: 'activity_type_id' })
-  activityType: ActivityType;
-
   @Column('decimal', { precision: 10, scale: 2 })
   target_footprint: number;
 

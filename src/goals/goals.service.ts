@@ -21,7 +21,6 @@ export class GoalsService {
       start_date: new Date(),
       end_date: createGoalDto.end_date,
       user: { email: createGoalDto.userEmail },
-      activityType: { id: createGoalDto.activityTypeId },
       achieved: false
     });
 
@@ -50,7 +49,6 @@ export class GoalsService {
         // Trova tutte le attività dell'utente per questo tipo e periodo
         const activities = await this.activitiesService.findByUserAndType(
           email,
-          goal.activityType.id,
           goal.start_date,
           goal.end_date
         );
@@ -100,10 +98,6 @@ export class GoalsService {
           daysLeft,
           startDate: goal.start_date,
           endDate: goal.end_date,
-          activityType: {
-            id: goal.activityType.id,
-            name: goal.activityType.name
-          }
         };
       })
     );

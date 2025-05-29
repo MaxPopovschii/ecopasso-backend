@@ -105,15 +105,12 @@ export class ActivitiesService {
 
   async findByUserAndType(
     userEmail: string,
-    activityTypeId: number,
     startDate?: Date,
     endDate?: Date
   ): Promise<Activity[]> {
     const query = this.activitiesRepository.createQueryBuilder('activity')
       .leftJoinAndSelect('activity.user', 'user')
-      .leftJoinAndSelect('activity.activityType', 'activityType')
       .where('user.email = :email', { email: userEmail })
-      .andWhere('activity.activityType.id = :typeId', { typeId: activityTypeId });
 
     if (startDate) {
       query.andWhere('activity.date >= :startDate', { startDate });
