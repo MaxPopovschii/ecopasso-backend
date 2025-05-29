@@ -82,4 +82,5 @@ export class UsersService {
   async comparePasswords(plainText: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(plainText, hashedPassword);
   }
+
 }
