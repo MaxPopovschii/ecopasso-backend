@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ActivitiesService } from '../activities/activities.service';
 import { FootprintResponseDto } from './dto/footprint-response.dto';
 import { FootprintStatsDto } from './dto/footprint-stats.dto';
+import { ActivityData } from 'src/activities/entities/activity-data.entity';
 
 @Injectable()
 export class FootprintService {
@@ -59,7 +60,7 @@ export class FootprintService {
     let quantity = 1;
     const possibleFields = ['consumption', 'quantity', 'distance_km', 'quantity_kg'];
     for (const field of possibleFields) {
-      const found = activity.data?.find(d => d.field_name === field);
+      const found: ActivityData | undefined = activity.data?.find((d: ActivityData) => d.field_name === field);
       if (found) {
         quantity = Number(found.field_value) || 1;
         break;
@@ -72,7 +73,7 @@ export class FootprintService {
   private extractDate(activity: any): Date {
     const possibleDateFields = ['consumption_date', 'data', 'data_viaggio', 'data_acquisto'];
     for (const field of possibleDateFields) {
-      const found = activity.data?.find(d => d.field_name === field);
+      const found: ActivityData | undefined = activity.data?.find((d: ActivityData) => d.field_name === field);
       if (found) {
         const parsedDate = new Date(found.field_value);
         if (!isNaN(parsedDate.getTime())) {
@@ -104,10 +105,6 @@ export class FootprintService {
       const year = createdAt.getFullYear();
       const month = createdAt.getMonth();
 
-      const category = this.mapCategory(
-        activity.activityType.category?.name,
-        activity.activityType.name
-      );
       const emissionFactor = Number(activity.activityType.emission_factor);
       const quantity = this.extractQuantity(activity);
       const emission = emissionFactor * quantity;
